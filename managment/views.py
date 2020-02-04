@@ -51,7 +51,7 @@ class EventRegister(CreateAPIView):
         serializer.save(event_id=event_id)
 
         attendee = Attendee.objects.latest('id')
-        send_email(attendee.id, attendee.email)
+        send_confirmation_email(attendee.id, attendee.email)
 
 
 # TODO: check that the authenticated user is the creator of the attendee event
@@ -66,11 +66,28 @@ def CheckinAttendee(request, attendee_id):
     return Response(content)
 
 
+# TODO: check that the authenticated user is the creator of the attendee event
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def EventMarkDone(request, event_id):
+    Event.objects.filter(pk=event_id).update(is_finished=True)
+
+    content = {
+        'status': 'ok'
+    }
+
+    event_name = Event.objects.get(pk=event_id).title
+    for attendee in Attendee.objects.filter(event_id=event_id, did_attend=True):
+        send_feedback_email(event_name, attendee.email)
+
+    return Response(content)
+
+
 class UserRegister(CreateAPIView):
     serializer_class = serializers.OrganizerRegister
 
 
-def send_email(user_id, email):
+def send_confirmation_email(user_id, email):
     subject = 'Subject'
     html_message = render_to_string('mail_template.html', {'id': user_id})
     plain_message = strip_tags(html_message)
@@ -78,11 +95,13 @@ def send_email(user_id, email):
     to = email
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
-    # send_mail(
-    #     'Subject here',
-    #     'Here is the message.',
-    #     'kfas-1@outlook.com',
-    #     ['agg2@outlook.com'],
-    #     fail_silently=False,
-    # )
-    # return HttpResponse("This is a simple response !")
+
+
+def send_feedback_email(event_name, email):
+    subject = 'Subject'
+    html_message = render_to_string('form_email.html', {'event_name': event_name})
+    plain_message = strip_tags(html_message)
+    from_email = 'kfas-1@outlook.com'
+    to = email
+
+    send_mail(subject, plain_message, from_email, [to], html_message=html_message)

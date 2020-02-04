@@ -9,6 +9,7 @@ class Event(models.Model):
     date = models.DateField()
     fee = models.IntegerField()
     max_attendees = models.IntegerField()
+    is_finished = models.BooleanField()
     created_by = models.ForeignKey(to=User, on_delete=models.PROTECT)
 
     def __str__(self):
