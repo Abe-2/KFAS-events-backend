@@ -13,6 +13,7 @@ class EventList(serializers.ModelSerializer):
 
     def get_created_by(self, created_by):
         # author.book_set.all() # does same work as Book.objects.filter(author=author)
+        print(created_by)
         return OrganizerInfo(User.objects.get(id=created_by.id)).data
 
 
