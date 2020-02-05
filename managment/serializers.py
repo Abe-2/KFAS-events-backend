@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from managment.models import Event, Attendee
+from managment.models import Event, Attendee, Feedback
 
 
 class OrganizerInfo(serializers.ModelSerializer):
@@ -53,8 +53,8 @@ class EventAttendees(serializers.ModelSerializer):
 
 class SubmitFeedback(serializers.ModelSerializer):
     class Meta:
-        model = Attendee
-        fields = '__all__'
+        model = Feedback
+        fields = ['rating', 'comment']
 
 
 class AttendeeRegister(serializers.ModelSerializer):

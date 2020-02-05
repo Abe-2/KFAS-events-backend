@@ -65,7 +65,8 @@ def send_feedback_email(event_name, email, feedback_code):
                                         'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
                                     })
     plain_message = strip_tags(html_message)
-    from_email = 'kfas-1@outlook.com'
+    # from_email = 'kfas-1@outlook.com'
+    from_email = 'kfas1111111 @ gmail.com'
     to = email
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
