@@ -149,8 +149,10 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 # email
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp-mail.outlook.com'
-EMAIL_HOST_USER = 'kfas-2@outlook.com'
-EMAIL_HOST_PASSWORD = 'CodedKfas2'
+# EMAIL_HOST_USER = 'kfas-2@outlook.com'
+# EMAIL_HOST_PASSWORD = 'CodedKfas2'
+EMAIL_HOST_USER = 'kfas1111111@gmail.com'
+EMAIL_HOST_PASSWORD = 'Coded-Kfas-1'
 EMAIL_PORT = 25
 
 TEMPLATES = [
