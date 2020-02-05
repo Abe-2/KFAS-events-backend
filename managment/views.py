@@ -33,7 +33,7 @@ class EventCreate(CreateAPIView):
 # TODO: check that the user is the event creator
 class EventAttendees(ListAPIView):
     serializer_class = serializers.EventAttendees
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, permissions.IsEventCreatorFromAttendee]
 
     lookup_url_kwarg = 'event_id'
 
@@ -56,7 +56,6 @@ class EventRegister(CreateAPIView):
         send_confirmation_email(attendee.id, attendee.email)
 
 
-# TODO: check that the authenticated user is the creator of the attendee event
 @api_view(['PUT'])
 @permission_classes((IsAuthenticated, ))
 def CheckinAttendee(request, attendee_id):
@@ -74,7 +73,6 @@ def CheckinAttendee(request, attendee_id):
     return Response(content)
 
 
-# TODO: check that the authenticated user is the creator of the event
 # @api_view(['GET'])
 # @permission_classes((IsAuthenticated, ))
 # def EventMarkDone(request, event_id):
@@ -98,16 +96,7 @@ class EventMarkDone(UpdateAPIView):
     permission_classes = [IsAuthenticated, permissions.IsEventCreator]
 
     def perform_update(self, serializer):
-        print(self)
-        event_id = self.kwargs.get(self.lookup_url_kwarg)
-
         serializer.save(is_finished=True)
-
-        # event = Event.objects.get(pk=event_id)
-        event = self.get_object()
-        for attendee in Attendee.objects.filter(event_id=event_id, did_attend=True):
-            feedback = Feedback.objects.create(attendee_id=attendee.id, event_id=event_id)
-            send_feedback_email(event.name, attendee.email, feedback.id)
 
 
 class UserRegister(CreateAPIView):
@@ -139,17 +128,3 @@ def send_confirmation_email(user_id, email):
 #     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 #     content = {'status': 'ok'}
 #     return Response(content)
-
-
-def send_feedback_email(event_name, email, feedback_code):
-    subject = 'Subject'
-    html_message = render_to_string('form_email.html',
-                                    {
-                                        'event_name': event_name,
-                                        'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
-                                    })
-    plain_message = strip_tags(html_message)
-    from_email = 'kfas-1@outlook.com'
-    to = email
-
-    send_mail(subject, plain_message, from_email, [to], html_message=html_message)

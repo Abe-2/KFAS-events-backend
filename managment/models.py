@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_save, post_save, post_delete, post_init
+from django.dispatch import receiver
+
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 class Event(models.Model):
@@ -7,6 +13,7 @@ class Event(models.Model):
     desc = models.TextField()
     location = models.CharField(max_length=20)
     date = models.DateField()
+    time = models.TimeField(null=True)
     fee = models.IntegerField()
     max_attendees = models.IntegerField()
     is_finished = models.BooleanField(default=False)
@@ -36,3 +43,29 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.attendee + " > " + self.event
+
+
+@receiver(pre_save, sender=Event)
+def check_to_send_email(instance, *args, **kwargs):
+    # print(kwargs)
+    if instance.pk is not None:  # already exists
+        old = Event.objects.get(pk=instance.pk)
+
+        if old.is_finished is False and instance.is_finished is True:
+            for attendee in Attendee.objects.filter(event_id=instance.id, did_attend=True):
+                feedback = Feedback.objects.create(attendee_id=attendee.id, event_id=instance.id)
+                send_feedback_email(instance.title, attendee.email, feedback.id)
+
+
+def send_feedback_email(event_name, email, feedback_code):
+    subject = 'Subject'
+    html_message = render_to_string('form_email.html',
+                                    {
+                                        'event_name': event_name,
+                                        'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
+                                    })
+    plain_message = strip_tags(html_message)
+    from_email = 'kfas-1@outlook.com'
+    to = email
+
+    send_mail(subject, plain_message, from_email, [to], html_message=html_message)

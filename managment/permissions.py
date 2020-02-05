@@ -6,3 +6,10 @@ class IsEventCreator(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.created_by
+
+
+class IsEventCreatorFromAttendee(BasePermission):
+    message = "Not the creator for the event"
+
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.event.created_by

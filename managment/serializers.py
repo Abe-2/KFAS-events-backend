@@ -17,16 +17,19 @@ class EventCreate(serializers.ModelSerializer):
 
 
 class EventNoFields(serializers.ModelSerializer):
+    # is_finished = serializers.HiddenField(default=True)
     class Meta:
         model = Event
         fields = []
 
-    def validate(self, data):
-        for key in data.keys():
-            print(key)
-        if not data['is_finished']:
-            raise serializers.ValidationError("the event is already done")
-        return data
+    # def validate(self, data):
+    #     print("hello")
+    #     for key in data.keys():
+    #         print(key)
+    #     print("hello")
+    #     if not data['is_finished']:
+    #         raise serializers.ValidationError("the event is already done")
+    #     return data
 
 
 class EventAttendees(serializers.ModelSerializer):
