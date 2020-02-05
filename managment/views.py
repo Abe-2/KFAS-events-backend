@@ -10,10 +10,12 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from .models import Event, Attendee
+from .models import Event, Attendee, Feedback
+import managment.permissions as permissions
 import managment.serializers as serializers
 
 
+# TODO: should be descending
 class EventList(ListAPIView):
     queryset = Event.objects.all()  # or .filter
     serializer_class = serializers.EventList
@@ -55,36 +57,62 @@ class EventRegister(CreateAPIView):
 
 
 # TODO: check that the authenticated user is the creator of the attendee event
-@api_view(['GET'])
+@api_view(['PUT'])
 @permission_classes((IsAuthenticated, ))
 def CheckinAttendee(request, attendee_id):
-    Attendee.objects.filter(pk=attendee_id).update(did_attend=True)
-
-    content = {
-        'status': 'ok'
-    }
-    return Response(content)
-
-
-# TODO: check that the authenticated user is the creator of the attendee event
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
-def EventMarkDone(request, event_id):
-    Event.objects.filter(pk=event_id).update(is_finished=True)
-
-    content = {
-        'status': 'ok'
-    }
-
-    event_name = Event.objects.get(pk=event_id).title
-    for attendee in Attendee.objects.filter(event_id=event_id, did_attend=True):
-        send_feedback_email(event_name, attendee.email)
+    attendee = Attendee.objects.filter(pk=attendee_id).values('event')
+    print(attendee[0]['event'])
+    content = {'status': 'ok'}
+    if attendee[0]['event'].created_by == request.user:
+        Attendee.objects.filter(pk=attendee_id).update(did_attend=True)
+    else:
+        content = {'status': 'error'}
 
     return Response(content)
+
+
+# TODO: check that the authenticated user is the creator of the event
+# @api_view(['GET'])
+# @permission_classes((IsAuthenticated, ))
+# def EventMarkDone(request, event_id):
+#     Event.objects.filter(pk=event_id).update(is_finished=True)
+#
+#     event = Event.objects.get(pk=event_id)
+#     for attendee in Attendee.objects.filter(event_id=event_id, did_attend=True):
+#         feedback = Feedback.objects.create(attendee=attendee.id, event=event.id)
+#         send_feedback_email(event.name, attendee.email, feedback.id)
+#
+#     content = {'status': 'ok'}
+#     return Response(content)
+
+
+class EventMarkDone(UpdateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = serializers.EventNoFields
+    lookup_field = 'id'
+    lookup_url_kwarg = 'event_id'
+
+    permission_classes = [IsAuthenticated, permissions.IsEventCreator]
+
+    def perform_update(self, serializer):
+        print(self)
+        event_id = self.kwargs.get(self.lookup_url_kwarg)
+
+        serializer.save(is_finished=True)
+
+        # event = Event.objects.get(pk=event_id)
+        event = self.get_object()
+        for attendee in Attendee.objects.filter(event_id=event_id, did_attend=True):
+            feedback = Feedback.objects.create(attendee_id=attendee.id, event_id=event_id)
+            send_feedback_email(event.name, attendee.email, feedback.id)
 
 
 class UserRegister(CreateAPIView):
     serializer_class = serializers.OrganizerRegister
+
+
+class SubmitFeedback(CreateAPIView):
+    serializer_class = serializers.SubmitFeedback
 
 
 def send_confirmation_email(user_id, email):
@@ -97,9 +125,26 @@ def send_confirmation_email(user_id, email):
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
 
-def send_feedback_email(event_name, email):
+# @api_view(['GET'])
+# def testemail(request):
+#     subject = 'Subject'
+#
+#     plain_message = strip_tags(html_message)
+#     from_email = 'kfas-1@outlook.com'
+#     to = 'kfas-1@outlook.com'
+#
+#     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+#     content = {'status': 'ok'}
+#     return Response(content)
+
+
+def send_feedback_email(event_name, email, feedback_code):
     subject = 'Subject'
-    html_message = render_to_string('form_email.html', {'event_name': event_name})
+    html_message = render_to_string('form_email.html',
+                                    {
+                                        'event_name': event_name,
+                                        'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
+                                    })
     plain_message = strip_tags(html_message)
     from_email = 'kfas-1@outlook.com'
     to = email

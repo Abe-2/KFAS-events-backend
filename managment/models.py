@@ -9,7 +9,7 @@ class Event(models.Model):
     date = models.DateField()
     fee = models.IntegerField()
     max_attendees = models.IntegerField()
-    is_finished = models.BooleanField()
+    is_finished = models.BooleanField(default=False)
     created_by = models.ForeignKey(to=User, on_delete=models.PROTECT)
 
     def __str__(self):
@@ -28,9 +28,11 @@ class Attendee(models.Model):
         return self.first_name + " " + self.last_name
 
 
-# class Event_Attendees(models.Model):
-#     event = models.ForeignKey(to=Event, on_delete=models.CASCADE)
-#     person = models.ForeignKey(to=Attendee, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return self.event + " > " + self.person
+class Feedback(models.Model):
+    rating = models.IntegerField(null=True)
+    comment = models.TextField(null=True)
+    event = models.ForeignKey(to=Event, on_delete=models.CASCADE)
+    attendee = models.ForeignKey(to=Attendee, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.attendee + " > " + self.event

@@ -13,13 +13,33 @@ class EventList(serializers.ModelSerializer):
 class EventCreate(serializers.ModelSerializer):
     class Meta:
         model = Event
-        exclude = ['created_by']
+        exclude = ['created_by', 'is_finished']
+
+
+class EventNoFields(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = []
+
+    def validate(self, data):
+        """
+        Check that the start is before the stop.
+        """
+        if data['start_date'] > data['end_date']:
+            raise serializers.ValidationError("finish must occur after start")
+        return data
 
 
 class EventAttendees(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         exclude = ['event']
+
+
+class SubmitFeedback(serializers.ModelSerializer):
+    class Meta:
+        model = Attendee
+        fields = '__all__'
 
 
 class AttendeeRegister(serializers.ModelSerializer):

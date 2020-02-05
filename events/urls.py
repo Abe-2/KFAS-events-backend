@@ -30,8 +30,12 @@ urlpatterns = [
     path('event/attendees/<int:event_id>', EventAttendees.as_view()),
     path('event/attendees/checkin/<int:attendee_id>', CheckinAttendee),
     path('event/create', EventCreate.as_view()),
-    path('event/done/<int:event_id>', EventMarkDone),
+    path('event/done/<int:event_id>', EventMarkDone.as_view()),
     path('event/register/<int:event_id>', EventRegister.as_view()),
+
+    path('feedback/submit', SubmitFeedback.as_view()),
+
+    # path('test/sendform', testemail),
 
     path('register', UserRegister.as_view()),
     path('login', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # TODO: make login with email instead of name
