@@ -42,7 +42,7 @@ class Feedback(models.Model):
     attendee = models.ForeignKey(to=Attendee, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.attendee + " > " + self.event
+        return self.attendee.first_name + " " + self.attendee.first_name + " > " + self.event.title
 
 
 @receiver(pre_save, sender=Event)
