@@ -5,9 +5,15 @@ from managment.models import Event, Attendee
 
 
 class EventList(serializers.ModelSerializer):
+    created_by = serializers.SerializerMethodField()
+
     class Meta:
         model = Event
         fields = '__all__'
+
+    def get_created_by(self, created_by):
+        # author.book_set.all() # does same work as Book.objects.filter(author=author)
+        return OrganizerInfo(User.objects.get(id=created_by.id)).data
 
 
 class EventCreate(serializers.ModelSerializer):
@@ -60,6 +66,12 @@ class CheckIn(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = ['did_attend']
+
+
+class OrganizerInfo(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
 
 
 class OrganizerRegister(serializers.ModelSerializer):
