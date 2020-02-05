@@ -127,7 +127,7 @@ def send_confirmation_email(user_id, email):
 @api_view(['GET'])
 def testemail(request):
     subject = 'Subject'
-
+    html_message = render_to_string('mail_template.html', {'id': 634})
     plain_message = strip_tags(html_message)
     from_email = 'kfas-1@outlook.com'
     to = 'kfas-1@outlook.com'
