@@ -33,7 +33,8 @@ urlpatterns = [
     path('event/done/<int:event_id>', EventMarkDone.as_view()),
     path('event/register/<int:event_id>', EventRegister.as_view()),
 
-    path('feedback/submit', SubmitFeedback.as_view()),
+    path('feedback/<int:event_id>', FeedbackList.as_view()),
+    path('feedback/submit/<int:feedback_id>', SubmitFeedback.as_view()),
 
     # path('test/sendform', testemail),
 

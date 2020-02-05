@@ -103,6 +103,13 @@ class UserRegister(CreateAPIView):
     serializer_class = serializers.OrganizerRegister
 
 
+class FeedbackList(ListAPIView):
+    queryset = Feedback.objects.all()  # or .filter
+    serializer_class = serializers.SubmitFeedback
+    lookup_field = 'event'
+    lookup_url_kwarg = 'event_id'
+
+
 class SubmitFeedback(CreateAPIView):
     serializer_class = serializers.SubmitFeedback
 
