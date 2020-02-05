@@ -36,7 +36,7 @@ urlpatterns = [
     path('feedback/<int:event_id>', FeedbackList.as_view()),
     path('feedback/submit/<int:feedback_id>', SubmitFeedback.as_view()),
 
-    # path('test/sendform', testemail),
+    path('test/sendform', testemail),
 
     path('register', UserRegister.as_view()),
     path('login', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # TODO: make login with email instead of name

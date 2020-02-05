@@ -124,14 +124,14 @@ def send_confirmation_email(user_id, email):
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
 
-# @api_view(['GET'])
-# def testemail(request):
-#     subject = 'Subject'
-#
-#     plain_message = strip_tags(html_message)
-#     from_email = 'kfas-1@outlook.com'
-#     to = 'kfas-1@outlook.com'
-#
-#     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
-#     content = {'status': 'ok'}
-#     return Response(content)
+@api_view(['GET'])
+def testemail(request):
+    subject = 'Subject'
+
+    plain_message = strip_tags(html_message)
+    from_email = 'kfas-1@outlook.com'
+    to = 'kfas-1@outlook.com'
+
+    send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+    content = {'status': 'ok'}
+    return Response(content)
