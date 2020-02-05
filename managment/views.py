@@ -118,7 +118,7 @@ def send_confirmation_email(user_id, email):
     subject = 'Subject'
     html_message = render_to_string('mail_template.html', {'id': user_id})
     plain_message = strip_tags(html_message)
-    from_email = 'kfas-1@outlook.com'
+    from_email = 'kfas-2@outlook.com'
     to = email
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
@@ -127,9 +127,9 @@ def send_confirmation_email(user_id, email):
 @api_view(['GET'])
 def testemail(request):
     subject = 'Subject'
-    html_message = render_to_string('mail_template.html', {'id': 634})
+    html_message = render_to_string('mail_template.html', {'id': "7838"})
     plain_message = strip_tags(html_message)
-    from_email = 'kfas-1@outlook.com'
+    from_email = 'kfas-2@outlook.com'
     to = 'kfas-1@outlook.com'
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
