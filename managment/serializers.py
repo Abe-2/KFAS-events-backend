@@ -22,11 +22,10 @@ class EventNoFields(serializers.ModelSerializer):
         fields = []
 
     def validate(self, data):
-        """
-        Check that the start is before the stop.
-        """
-        if data['start_date'] > data['end_date']:
-            raise serializers.ValidationError("finish must occur after start")
+        for key in data.keys():
+            print(key)
+        if not data['is_finished']:
+            raise serializers.ValidationError("the event is already done")
         return data
 
 

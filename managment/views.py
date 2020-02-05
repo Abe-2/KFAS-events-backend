@@ -61,9 +61,12 @@ class EventRegister(CreateAPIView):
 @permission_classes((IsAuthenticated, ))
 def CheckinAttendee(request, attendee_id):
     attendee = Attendee.objects.filter(pk=attendee_id).values('event')
-    print(attendee[0]['event'])
+    print(attendee)
     content = {'status': 'ok'}
-    if attendee[0]['event'].created_by == request.user:
+
+    event = Event.objects.get(pk=attendee[0]['event'])
+    print(event)
+    if event.created_by == request.user:
         Attendee.objects.filter(pk=attendee_id).update(did_attend=True)
     else:
         content = {'status': 'error'}
