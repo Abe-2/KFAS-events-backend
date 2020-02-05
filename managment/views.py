@@ -113,7 +113,7 @@ class FeedbackList(ListAPIView):
 class SubmitFeedback(UpdateAPIView):
     queryset = Feedback.objects.all()
     serializer_class = serializers.SubmitFeedback
-    lookup_field = 'event'
+    lookup_field = 'id'
     lookup_url_kwarg = 'feedback_id'
 
 
