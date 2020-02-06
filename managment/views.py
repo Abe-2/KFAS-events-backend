@@ -131,11 +131,18 @@ def send_confirmation_email(user_id, email):
 @api_view(['GET'])
 def testemail(request):
     subject = 'Subject'
-    html_message = render_to_string('mail_template.html', {'id': "7838"})
+    # html_message = render_to_string('mail_template.html', {'id': "7838"})
+    html_message = render_to_string('form_email.html',
+                                    {
+                                        'event_name': "event 1",
+                                        # 'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
+                                        'feedback_link': "http://localhost:3000/feedback/" + str(
+                                            27)
+                                    })
     plain_message = strip_tags(html_message)
     # from_email = 'kfas-2@outlook.com'
     from_email = 'kfas1111111@gmail.com'
-    to = 'kfas-1@outlook.com'
+    to = 'xbox.ps3.psp.ps2@gmail.com'
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
     content = {'status': 'ok'}
