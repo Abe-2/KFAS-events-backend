@@ -62,7 +62,9 @@ def send_feedback_email(event_name, email, feedback_code):
     html_message = render_to_string('form_email.html',
                                     {
                                         'event_name': event_name,
-                                        'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
+                                        # 'feedback_link': "https://zen-yalow-035b6d.netlify.com/feedback/" + str(feedback_code)
+                                        'feedback_link': "http://localhost:3000/feedback/" + str(
+                                            feedback_code)
                                     })
     plain_message = strip_tags(html_message)
     # from_email = 'kfas-1@outlook.com'
