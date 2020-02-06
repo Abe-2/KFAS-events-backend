@@ -31,9 +31,10 @@ ALLOWED_HOSTS = ['event-managment-coded.herokuapp.com', 'localhost']
 
 # Application definition
 
-CORS_ORIGIN_WHITELIST = [
-    "https://zen-yalow-035b6d.netlify.com",
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "https://zen-yalow-035b6d.netlify.com",
+#     "*"
+# ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'corsheaders',
+    # 'corsheaders',
     'rest_framework',
     'managment'
 ]
@@ -89,8 +90,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'events.urls'
